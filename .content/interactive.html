@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>AI Decay Model — Interactive</title>
+  <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial; margin: 24px; }
+    .controls { display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:12px; }
+    label { font-size:13px; min-width:120px; }
+    input[type=range] { width:220px; }
+    .value { width:80px; text-align:right; font-variant-numeric: tabular-nums; }
+  </style>
+</head>
+<body>
+  <h2>AI Decay Model — Interactive sweep</h2>
+  <div class="controls">
+    <div>
+      <label>V0 (trillions USD)</label>
+      <input id="v0" type="number" step="0.1" value="15.83" min="0.1" />
+    </div>
+    <div>
+      <label>Ad fraction (0–1)</label>
+      <input id="ad_fraction" type="number" step="0.01" value="0.45" min="0" max="1" />
+    </div>
+    <div>
+      <label>tau_ad (years)</label>
+      <input id="tau_ad" type="range" min="0.5" max="10" step="0.1" value="2.5" />
+      <span class="value" id="tau_ad_val">2.5</span>
+    </div>
+    <div>
+      <label>tau_platform (years)</label>
+      <input id="tau_platform" type="range" min="2" max="40" step="0.5" value="12" />
+      <span class="value" id="tau_platform_val">12</span>
+    </div>
+    <div>
+      <label>tau_c (consolidator)</label>
+      <input id="tau_c" type="range" min="0.2" max="10" step="0.1" value="3" />
+      <span class="value" id="tau_c_val">3.0</span>
+    </div>
+    <div>
+      <button id="update">Update</button>
+    </div>
+  </div>
+
+  <div id="plot" style="height:520px;"></div>
+
+  <script>
+    const years = Array.from({length:11}, (_,i)=>i);
+    const v0Input = document.getElementById('v0');
+    const adFraction = document.getElementById('ad_fraction');
+    const tauAd = document.getElementById('tau_ad');
+    const tauPlatform = document.getElementById('tau_platform');
+    const tauC = document.getElementById('tau_c');
+    const tauAdVal = document.getElementById('tau_ad_val');
+    const tauPlatformVal = document.getElementById('tau_platform_val');
+    const tauCVal = document.getElementById('tau_c_val');
+    const updateBtn = document.getElementById('update');
+
+    function expDecay(V0, tau, t){ return V0 * Math.exp(-t / tau); }
+    function consolidatorFraction(t, tau_c){ return 1 - Math.exp(-t / tau_c); }
+
+    function render(){
+      const V0 = parseFloat(v0Input.value) * 1e12;
+      const adF = parseFloat(adFraction.value);
+      const tau_ad = parseFloat(tauAd.value);
+      const tau_platform = parseFloat(tauPlatform.value);
+      const tau_c = parseFloat(tauC.value);
+
+      tauAdVal.textContent = tau_ad.toFixed(2);
+      tauPlatformVal.textContent = tau_platform.toFixed(2);
+      tauCVal.textContent = tau_c.toFixed(2);
+
+      const V_ad = years.map(t => expDecay(V0*adF, tau_ad, t));
+      const V_platform = years.map(t => expDecay(V0*(1-adF), tau_platform, t));
+      const V_total = years.map((t,i) => V_ad[i] + V_platform[i]);
+      const C = years.map(t => consolidatorFraction(t, tau_c));
+      const consolidator_value = years.map((t,i)=> V_total[i] * C[i]);
+
+      const toT = arr => arr.map(x => +(x/1e12).toFixed(3));
+
+      const traces = [
+        { x: years, y: toT(V_ad), name:'Ad layer (trillions)', mode:'lines+markers' },
+        { x: years, y: toT(V_platform), name:'Platform layer (trillions)', mode:'lines+markers' },
+        { x: years, y: toT(V_total), name:'Total (trillions)', mode:'lines', line:{width:3, dash:'dashdot'} },
+        { x: years, y: toT(consolidator_value), name:'Consolidator share (trillions)', mode:'lines+markers', marker:{symbol:'diamond'} },
+      ];
+
+      const layout = {
+        title: 'AI decay model (V0 in trillions USD)',
+        xaxis:{title:'Years'}, yaxis:{title:'Market cap (trillions USD)'},
+        legend:{orientation:'h', y:-0.2}
+      };
+      Plotly.newPlot('plot', traces, layout, {responsive:true});
+    }
+
+    // wire events
+    [tauAd, tauPlatform, tauC].forEach(el => el.addEventListener('input', render));
+    updateBtn.addEventListener('click', render);
+    render();
+  </script>
+</body>
+</html>
+
