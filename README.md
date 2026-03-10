@@ -36,7 +36,7 @@ Full ref list: [REFERENCES.md](https://github.com/nkllon/zero-click/blob/content
 
 **Corpus — the rest of the bow tie**
 
-The internet-biz corpus (narrative, research gaps, argument matrix, ontology—same body of work) pulls this into the full picture: click-for-dollars vs walled gardens, Gen AI erosion of the discovery layer, growth dependency, agentic bypass, and where the value goes when the click goes away. In there you get:
+The [internet-biz corpus](https://github.com/nkllon/internet-biz-corpus) (narrative, research gaps, argument matrix, ontology) pulls this into the full picture: click-for-dollars vs walled gardens, Gen AI erosion of the discovery layer, growth dependency, agentic bypass, and where the value goes when the click goes away. In there you get:
 
 - **Research gaps** — DMA and gatekeepers, data portability and delegated access, zero-click (the studies above), accessibility as interoperability symptom, ad tech consolidation and PE rollups. Tagged observed / derived / speculative.
 - **Argument matrix** — Where five model runs agree and disagree (re-rate vs collapse, bypass vs recapture). Quantified estimates, unsupported claims, missing evidence.
