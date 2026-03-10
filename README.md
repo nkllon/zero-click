@@ -10,6 +10,8 @@ That’s not a small tweak. It’s a transfer. Value moves from the click layer�
 
 So zero-click isn’t just a metric. It’s the beat of a larger shift: discovery and intent getting captured before the click. Traffic that used to go out now stays in. Revenue that used to flow to the open web now flows to the surface. And the “click for dollars” model—the whole idea that you monetize by sitting between intent and resolution—starts to erode. Not in a year. Not in a quarter. Every time someone gets an answer without clicking, it’s already happening.
 
+We are taking our attention back.
+
 This repo is about that story. The numbers, the studies, the references—the back matter—live in the research.
 
 ---
